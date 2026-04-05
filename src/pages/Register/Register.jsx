@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import React, { useState } from "react";
 import { auth } from "../../firebase/firebase.init";
 import { IoEyeOffSharp } from "react-icons/io5";
@@ -17,9 +17,12 @@ const Register = () => {
 
   const handleRegister = (event) => {
     event.preventDefault();
+    const name = event.target.name.value;
+    const photo = event.target.photo.value;
     const email = event.target.email.value;
     const password = event.target.password.value;
     const terms = event.target.terms.checked;
+
 
     //Password Validation RegEx:
 
@@ -59,6 +62,13 @@ const Register = () => {
         setSuccess(true);
         event.target.reset();
 
+        //Update user profile
+        const profile = {
+          displayName: name,
+          photoURL: photo
+        }
+        updateProfile(result.user,profile).then(()=>{}).catch()
+
         // Send Verification Mail:
         sendEmailVerification(result.user).then(() =>{
           alert('Please login your email & verify')
@@ -76,6 +86,23 @@ const Register = () => {
           <div className="card-body">
             <form onSubmit={handleRegister}>
               <fieldset className="fieldset">
+                {/* User Name */}
+                <label className="label">Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  className="input"
+                  placeholder="Name Here"
+                />
+                {/* User Photo URL */}
+                <label className="label">Photo</label>
+                <input
+                  type="text"
+                  name="photo"
+                  className="input"
+                  placeholder="Photo URL"
+                />
+                {/* User Email */}
                 <label className="label">Email</label>
                 <input
                   type="email"
