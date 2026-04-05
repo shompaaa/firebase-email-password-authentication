@@ -1,10 +1,15 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import React, { useState } from "react";
+import { sendPasswordResetEmail, signInWithEmailAndPassword } from "firebase/auth";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router";
 import { auth } from "../../firebase/firebase.init";
 
 const Login = () => {
+
   const [error,setError] = useState('')
+  const emailRef = useRef()
+
+
+
   const handleLogin = (e) => {
     e.preventDefault()
     const email = e.target.email.value;
@@ -20,6 +25,13 @@ const Login = () => {
     }).catch(error =>setError(error.message))
   };
 
+  const handleForgotPassword = ()=>{
+    const email = emailRef.current.value;
+    sendPasswordResetEmail(auth,email).then(()=>{
+      alert('Please check your email')
+    })
+  }
+
   return (
     <div className="hero-content flex-col m-auto mt-5">
       <h1 className="text-3xl font-bold">Login now!</h1>
@@ -28,10 +40,15 @@ const Login = () => {
           <form onSubmit={handleLogin}>
             <fieldset className="fieldset">
               <label className="label">Email</label>
-              <input type="email" name="email" className="input" placeholder="Email" />
+              <input type="email"
+               name="email" 
+               className="input" 
+               placeholder="Email"
+               ref={emailRef} 
+               />
               <label className="label">Password</label>
               <input type="password" name="password" className="input" placeholder="Password" />
-              <div>
+              <div onClick={handleForgotPassword}>
                 <a className="link link-hover">Forgot password?</a>
               </div>
               <button className="btn btn-neutral mt-4">Login</button>
